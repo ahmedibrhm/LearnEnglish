@@ -1,7 +1,8 @@
 import requests
 import base64
 import uuid
-import os
+from settings import GOOGLE_API_KEY
+
 def get_audio(text, language_code, voice_name, api_key):
     url = "https://texttospeech.googleapis.com/v1/text:synthesize?key=" + api_key
     
@@ -37,7 +38,7 @@ def convert_segments_to_audio(segments):
         else:
             lang = 'en-US'
             voice_name = 'en-US-Neural2-C'
-        audio += get_audio(segment[1], lang, voice_name, os.environ["GOOGLE_API_KEY"])
+        audio += get_audio(segment[1], lang, voice_name, GOOGLE_API_KEY)
     audio_bytes = base64.b64decode(audio)
     with open(file_name, "wb") as file:
         file.write(audio_bytes)

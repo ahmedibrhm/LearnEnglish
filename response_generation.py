@@ -1,12 +1,13 @@
-import os
 import openai
 import re
+from settings import OPENAI_API_KEY
 
 
 def get_openai_response(messages):
 
     # Set the API key
-    openai.api_key = os.environ["OPENAI_API_KEY"]
+    openai.api_key = OPENAI_API_KEY
+
     # Append the new user message to the messages list
     
     # Get the response from OpenAI
