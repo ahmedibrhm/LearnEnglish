@@ -1,5 +1,5 @@
 from audio_generation import convert_segments_to_audio
-from response_generation import get_openai_response, split_text_by_language, combine_text_by_language, convert_audio_text
+from open_ai_utils import get_openai_response, split_text_by_language, combine_text_by_language, convert_audio_text, convert_text_audio
 from telegram_utils import download_audio_from_telegram
 from telegram.ext import CallbackContext
 from bot import bot
@@ -62,19 +62,10 @@ def handle_message(update: Update, context: CallbackContext) -> None:
         "content": response
     })
     print("Response:", response)
-    # Split the response into segments by language
-    segments = split_text_by_language(response)
-
-    print("Segments:", segments)
-    # Combine the segments into a single message with language-specific formatting
-    combined_segments = combine_text_by_language(segments)
-    print("Combined segments:", combined_segments)
-
 
     # Convert the message to audio
-    audio_file = convert_segments_to_audio(combined_segments)
+    audio_file = convert_text_audio(response)
     print("Audio file:", audio_file)
-
 
     # Send the audio file to the user
     bot.send_voice(chat_id=user_id, voice=open(audio_file, 'rb'))

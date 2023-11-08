@@ -1,7 +1,6 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 from settings import TELEGRAM_BOT_TOKEN
 from handlers import start, handle_message
-import os
 
 
 

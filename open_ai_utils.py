@@ -1,17 +1,15 @@
-import openai
+from openai import OpenAI
 import re
-from settings import OPENAI_API_KEY
+import uuid
 
+client = OpenAI()
 
 def get_openai_response(messages):
-
-    # Set the API key
-    openai.api_key = OPENAI_API_KEY
 
     # Append the new user message to the messages list
     
     # Get the response from OpenAI
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=messages,
         temperature=1,
@@ -22,7 +20,8 @@ def get_openai_response(messages):
     )
     
     # Extract the model's message from the response
-    model_message = response.choices[0].message['content']
+
+    model_message = response.choices[0].message.content
 
     return model_message
 
@@ -75,5 +74,20 @@ def combine_text_by_language(segments):
 def convert_audio_text(audio_path):
     # use OPENAI API to convert audio to text
     file = open(audio_path, "rb")
-    transcript = openai.Audio.transcribe(model="whisper-1", file=file, response_format="text", language="en")
+    transcript = client.audio.transcriptions.create(model="whisper-1", file=file, response_format="text")
     return transcript
+
+def convert_text_audio(text):
+    # use OPENAI API to convert text to audio
+    print('hhh', text)
+    response = client.audio.speech.create(
+        model="tts-1",
+        voice="shimmer",
+        input=text,
+    )
+
+    file_name = str(uuid.uuid4()) + ".mp3"
+    response.stream_to_file(file_name)
+    return file_name
+
+    
