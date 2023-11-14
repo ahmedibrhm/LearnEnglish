@@ -13,7 +13,6 @@ def get_openai_response(messages):
         model="gpt-3.5-turbo",
         messages=messages,
         temperature=1,
-        max_tokens=1000,
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0
@@ -71,10 +70,11 @@ def combine_text_by_language(segments):
 
     return segments_combined
 
-def convert_audio_text(audio_path):
+def convert_audio_text(audio_path, language='', prompt=''):
     # use OPENAI API to convert audio to text
     file = open(audio_path, "rb")
-    transcript = client.audio.transcriptions.create(model="whisper-1", file=file, response_format="text")
+    print('file', file)
+    transcript = client.audio.transcriptions.create(model="whisper-1", file=file, response_format="text", language=language, prompt=prompt)
     return transcript
 
 def convert_text_audio(text):
