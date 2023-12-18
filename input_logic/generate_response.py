@@ -1,25 +1,36 @@
 from openai import OpenAI
+import time
 
 client = OpenAI()
 
-def get_openai_response(messages):
+def get_openai_response(message, assistant_id, thread_id):
 
-    # Append the new user message to the messages list
-    
-    # Get the response from OpenAI
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=1,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+    my_thread_message = client.beta.threads.messages.create(
+    thread_id=thread_id,
+    role="user",
+    content=message,
     )
-    
-    # Extract the model's message from the response
 
-    model_message = response.choices[0].message.content
+    # Step 4: Run the Assistant
+    my_run = client.beta.threads.runs.create(
+    thread_id=thread_id,
+    assistant_id=assistant_id,
+    )
 
-    return model_message
+    # Step 5: Periodically retrieve the Run to check on its status to see if it has moved to completed
+    while my_run.status != "completed":
+        keep_retrieving_run = client.beta.threads.runs.retrieve(
+            thread_id=thread_id,
+            run_id=my_run.id
+        )
+        if keep_retrieving_run.status == "completed":
+            print("\n")
+            break
+        time.sleep(0.5)
 
+    # Step 6: Retrieve the Messages added by the Assistant to the Thread
+    all_messages = client.beta.threads.messages.list(
+    thread_id=thread_id
+    )
+    return all_messages.data[0].content[0].text.value
     
