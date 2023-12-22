@@ -1,5 +1,5 @@
 from openai import OpenAI
-from config import SYSTEM_PROMPT
+from .config import SYSTEM_PROMPT
 
 client = OpenAI()
 
